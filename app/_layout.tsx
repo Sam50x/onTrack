@@ -1,12 +1,13 @@
-import { useRouter, Stack } from "expo-router";
+import { useRouter, usePathname, Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { getUser } from "./lib/actions";
+import { getUser } from "../lib/actions";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
 
 const RouteGuard = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
     const getSession = async () => {
@@ -16,16 +17,15 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
       console.log(session)
       setIsLoading(false)
 
-      if (!session) {
-        router.push('/login')
-      }
-      else {
-        router.push('/')
+      if (!session && pathname !== "/login") {
+        router.replace("/login");
+      } else if (session && pathname === "/login") {
+        router.replace("/");
       }
     }
 
     getSession()
-  }, [router])
+  }, [pathname, router])
 
   if (isLoading) {
     return (

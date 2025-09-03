@@ -1,4 +1,5 @@
 import supabase from "./supabase"
+import { Subscription } from "./types/subscription.type"
 
 export const signUp = async (email: string, password: string) => {
 
@@ -9,10 +10,10 @@ export const signUp = async (email: string, password: string) => {
 
     if (error) {
         console.error(error)
-        return { error }
+        return error
     }
 
-    return { data }
+    return data
 }
 
 export const signIn = async (email: string, password: string) => {
@@ -24,10 +25,10 @@ export const signIn = async (email: string, password: string) => {
 
     if (error) {
         console.error(error)
-        return { error }
+        return error
     }
 
-    return { data }
+    return data
 }
 
 export const signOut = async () => {
@@ -35,43 +36,238 @@ export const signOut = async () => {
 
     if (error) {
         console.log(error)
-        return { error }
+        return error
     }
 
     return { data: 'User signed out successfully' }
 }
 
 export const getUser = async () => {
-    const { data: user, error } = await supabase.auth.getUser()
+    const { data, error } = await supabase.auth.getUser()
 
     if (error) {
         return null
     }
 
-    return user
+    return data.user
 }
 
 export const getAllSubscriptions = async () => {
+    const user = await getUser()
 
+    if (!user || !user.id) {
+        return { error: 'No user session found' }
+    }
+
+    const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+
+    if (error) {
+        console.error(error)
+        return error
+    }
+
+    return data
 }
 
-export const getOneSubscription = async () => {
+export const getOneSubscription = async (id: string) => {
+    const user = await getUser()
 
+    if (!user || !user.id) {
+        return { error: 'No user session found' }
+    }
+
+    if (!id) {
+        return { error: 'Subscription ID is required' }
+    }
+
+    const { data, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('id', id)
+        .single()
+
+    if (error) {
+        console.error(error)
+        return error
+    }
+
+    return data
 }
 
-export const createSubscription = async () => {
+export const createSubscription = async (inputData: Subscription) => {
+    const {
+        frequency,
+        title,
+        description,
+        last_paid_at,
+        price,
+    } = inputData
 
+    const user = await getUser()
+
+    if (!user || !user.id) {
+        return { error: 'No user session found' }
+    }
+
+    let daysToAdd
+
+    if (frequency === 'Monthly') daysToAdd = 30
+    else daysToAdd = 365
+
+    const newDueDate = new Date(
+        last_paid_at.getTime() + daysToAdd * 24 * 60 * 60 * 1000
+    )
+
+    const { data, error } = await supabase
+        .from('subscriptions')
+        .insert([
+            {
+                frequency,
+                title,
+                description,
+                last_paid_at: new Date(last_paid_at),
+                due_date: new Date(newDueDate),
+                price,
+                user_id: user.id
+            },
+        ])
+        .select()
+        .single()
+
+    if (error) {
+        console.error(error)
+        return error
+    }
+
+    return data
 }
 
-export const updateSubscription = async () => {
+export const updateSubscription = async (inputData: Partial<Subscription>) => {
+    const {
+        frequency,
+        title,
+        description,
+        price,
+        id,
+    } = inputData ?? {}
 
+    const user = await getUser()
+
+    if (!user || !user.id) {
+        return { error: 'No user session found' }
+    }
+
+    if (!id) {
+        return { error: 'Subscription ID is required' }
+    }
+
+    const props: Partial<Subscription> = {}
+
+    if (frequency) props.frequency = frequency
+    if (title) props.title = title
+    if (description) props.description = description
+    if (price) props.price = price
+
+    const { data, error } = await supabase
+        .from('subscriptions')
+        .update(props)
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+        .single()
+
+    if (error) {
+        console.error(error)
+        return error
+    }
+
+    return data
 }
 
-export const paySubscription = async () => {
+export const paySubscription = async (inputData: Partial<Subscription>) => {
+    const {
+        id,
+        last_paid_at,
+    } = inputData
 
+    const user = await getUser()
+
+    if (!user || !user.id) {
+        return { error: 'No user session found' }
+    }
+
+    if (!id || !last_paid_at) {
+        return { error: 'Subscription ID and Last Paid Date are required' }
+    }
+
+    const subscription = await getOneSubscription(id)
+
+    if ('error' in subscription) {
+        console.log(subscription.error)
+        return subscription.error
+    }
+
+    let daysToAdd
+
+    if (subscription.frequency === 'Monthly') daysToAdd = 30
+    else daysToAdd = 365
+
+    const newDueDate = new Date(
+        last_paid_at.getTime() + daysToAdd * 24 * 60 * 60 * 1000
+    )
+
+    const { data, error } = await supabase
+        .from('subscriptions')
+        .update({
+            'last_paid_at': new Date(last_paid_at),
+            'due_date': new Date(newDueDate),
+        })
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+        .single()
+
+    if (error) {
+        console.error(error)
+        return error
+    }
+
+    return data
 }
 
-export const deleteSubscription = async () => {
+export const deleteSubscription = async (id: string) => {
+    const user = await getUser()
 
+    if (!user || !user.id) {
+        return { error: 'No user session found' }
+    }
+
+    if (!id) {
+        return { error: 'Subscription ID is required' }
+    }
+
+    const { data, error } = await supabase
+        .from('subscriptions')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select()
+        .single()
+
+    if (error) {
+        console.error(error)
+        return error
+    }
+
+    return data
 }
 
+export const createSafeDate = (dateInput: string | Date) => {
+    const date = new Date(dateInput)
+    date.setHours(12, 0, 0, 0)
+    return date
+}

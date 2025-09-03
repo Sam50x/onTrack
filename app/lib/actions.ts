@@ -10,6 +10,10 @@ export const signOut = async () => {
 
 }
 
+export const getUser = async () => {
+    return null
+}
+
 export const getAllSubscriptions = async () => {
 
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getUser } from "../lib/actions";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
+import tw, { useDeviceContext } from 'twrnc'
 
 const RouteGuard = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -43,6 +44,7 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
 }
 
 export default function RootLayout() {
+  useDeviceContext(tw)
   return (
     <RouteGuard>
       <Stack screenOptions={{ headerShown: false }}>

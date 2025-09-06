@@ -2,8 +2,8 @@ import { useRouter, usePathname, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { getUser } from "../lib/actions";
 import { View } from "react-native";
-import { Text } from "react-native-paper";
 import tw, { useDeviceContext } from 'twrnc'
+import LoadingScreen from "../components/LoadingScreen";
 
 const RouteGuard = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -16,7 +16,7 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
       const session = await getUser()
 
       console.log(session)
-      setIsLoading(false)
+      // setIsLoading(false)
 
       if (!session && pathname !== "/login") {
         router.replace("/login");
@@ -30,8 +30,8 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
 
   if (isLoading) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View style={tw`flex-1 flex justify-center items-center`}>
+        <LoadingScreen />
       </View>
     )
   }
@@ -47,7 +47,10 @@ export default function RootLayout() {
   useDeviceContext(tw)
   return (
     <RouteGuard>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: '#353434' }
+      }}>
         <Stack.Screen name="(tabs)" />
       </Stack>
     </RouteGuard>

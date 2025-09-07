@@ -9,8 +9,7 @@ export const signUp = async (email: string, password: string) => {
     })
 
     if (error) {
-        console.error(error)
-        return error
+        return { error: error?.message as string || 'Error while Signing up' }
     }
 
     return data
@@ -24,8 +23,7 @@ export const signIn = async (email: string, password: string) => {
     })
 
     if (error) {
-        console.error(error)
-        return error
+        return { error: error?.message || 'Error while Signing in' }
     }
 
     return data
@@ -35,8 +33,7 @@ export const signOut = async () => {
     const { error } = await supabase.auth.signOut()
 
     if (error) {
-        console.log(error)
-        return error
+        return { error: error?.message as string || 'Error while Signing out' }
     }
 
     return { data: 'User signed out successfully' }
@@ -65,8 +62,7 @@ export const getAllSubscriptions = async () => {
         .eq('user_id', user.id)
 
     if (error) {
-        console.error(error)
-        return error
+        return { error: error?.message as string || 'Error while getting subscriptions' }
     }
 
     return data
@@ -91,8 +87,7 @@ export const getOneSubscription = async (id: string) => {
         .single()
 
     if (error) {
-        console.error(error)
-        return error
+        return { error: error?.message as string || 'Error while getting subscription' }
     }
 
     return data
@@ -139,8 +134,7 @@ export const createSubscription = async (inputData: Subscription) => {
         .single()
 
     if (error) {
-        console.error(error)
-        return error
+        return { error: error?.message as string || 'Error while creating subscription' }
     }
 
     return data
@@ -181,8 +175,7 @@ export const updateSubscription = async (inputData: Partial<Subscription>) => {
         .single()
 
     if (error) {
-        console.error(error)
-        return error
+        return { error: error?.message as string || 'Error while updating subscription' }
     }
 
     return data
@@ -232,8 +225,7 @@ export const paySubscription = async (inputData: Partial<Subscription>) => {
         .single()
 
     if (error) {
-        console.error(error)
-        return error
+        return { error: error?.message as string || 'Error while paying subscription' }
     }
 
     return data
@@ -259,8 +251,7 @@ export const deleteSubscription = async (id: string) => {
         .single()
 
     if (error) {
-        console.error(error)
-        return error
+        return { error: error?.message as string || 'Error while deleting subscription' }
     }
 
     return data

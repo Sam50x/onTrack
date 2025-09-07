@@ -16,7 +16,7 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
       const session = await getUser()
 
       console.log(session)
-      // setIsLoading(false)
+      setIsLoading(false)
 
       if (!session && pathname !== "/login") {
         router.replace("/login");
@@ -30,7 +30,7 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
 
   if (isLoading) {
     return (
-      <View style={tw`flex-1 flex justify-center items-center`}>
+      <View style={[tw`flex-1 flex justify-center items-center`, { backgroundColor: '#353434' }]}>
         <LoadingScreen />
       </View>
     )

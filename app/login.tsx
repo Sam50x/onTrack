@@ -13,7 +13,7 @@ const LoginScreen = () => {
                 <AppHeader />
             </View>
             <View style={tw`flex-1 justify-center items-center px-6`}>
-
+                
             </View>
         </KeyboardAvoidingView>
     )

@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router'
 import { signOut } from '../../lib/actions'
 import { View, Text } from 'react-native'
 import { Button } from 'react-native-paper'
+import tw from 'twrnc'
 
 const HomeScreen = () => {
 
@@ -17,7 +18,7 @@ const HomeScreen = () => {
 
 
     return (
-        <View>
+        <View style={tw`flex-1 bg-[#353434]`}>
             <Text>HomeScreen</Text>
             <Button onPress={handleSignOut}>Sign out</Button>
         </View>

@@ -1,9 +1,11 @@
 import { useRouter, usePathname, Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { getUser } from "../lib/actions";
-import { View } from "react-native";
 import tw, { useDeviceContext } from 'twrnc'
 import LoadingScreen from "../components/LoadingScreen";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import { View } from "react-native";
+import { StatusBar } from 'expo-status-bar'
 
 const RouteGuard = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -26,13 +28,15 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
     }
 
     getSession()
-  }, [pathname, router])
+  }, [router])
 
   if (isLoading) {
     return (
-      <View style={[tw`flex-1 flex justify-center items-center`, { backgroundColor: '#353434' }]}>
-        <LoadingScreen />
-      </View>
+      <SafeAreaView style={tw`flex-1`}>
+        <View style={[tw`flex-1 flex justify-center items-center`, { backgroundColor: '#353434' }]}>
+          <LoadingScreen />
+        </View>
+      </SafeAreaView>
     )
   }
 
@@ -46,13 +50,18 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
 export default function RootLayout() {
   useDeviceContext(tw)
   return (
-    <RouteGuard>
-      <Stack screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: '#353434' }
-      }}>
-        <Stack.Screen name="(tabs)" />
-      </Stack>
-    </RouteGuard>
+    <SafeAreaProvider style={tw`bg-[#353434]`}>
+      <StatusBar style="light" />
+      <SafeAreaView style={tw`flex-1`}>
+        <RouteGuard>
+          <Stack screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#353434' }
+          }}>
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+        </RouteGuard>
+      </SafeAreaView>
+    </SafeAreaProvider>
   )
 }

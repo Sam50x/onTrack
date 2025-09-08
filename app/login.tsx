@@ -41,7 +41,7 @@ const LoginScreen = () => {
                 res = await signIn(email, password)
             }
 
-            if (!res || 'error' in res){
+            if (!res || 'error' in res) {
                 setError(res.error)
                 return
             }

@@ -258,7 +258,23 @@ export const deleteSubscription = async (id: string) => {
 }
 
 export const createSafeDate = (dateInput: string | Date) => {
-    const date = new Date(dateInput)
-    date.setHours(12, 0, 0, 0)
+    if (dateInput instanceof Date) {
+        const date = new Date(dateInput)
+        date.setHours(12, 0, 0, 0)
+        return date
+    }
+
+    const parts = dateInput.split(/[-\/]/)
+    if (parts.length !== 3) return new Date(NaN)
+
+    let [month, day, year] = parts.map(Number)
+    if (year < 100) year += 2000
+
+    const date = new Date(year, month - 1, day, 12, 0, 0, 0)
     return date
+}
+
+export const isValidDate = (date: string) => {
+    const regex = /^(0?[1-9]|1[0-2])[-\/](0?[1-9]|[12][0-9]|3[01])[-\/](\d{2}|\d{4})$/;
+    return regex.test(date);
 }

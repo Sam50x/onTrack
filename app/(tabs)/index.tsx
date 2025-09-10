@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router'
 import { signOut } from '../../lib/actions'
-import { View, Text } from 'react-native'
-import { Button } from 'react-native-paper'
+import { View } from 'react-native'
+import { Button, Text } from 'react-native-paper'
 import tw from 'twrnc'
 
 const HomeScreen = () => {

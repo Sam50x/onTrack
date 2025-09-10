@@ -71,18 +71,14 @@ const LoginScreen = () => {
                 <View style={tw`w-full flex flex-col justify-center items-center gap-2 p-4`}>
                     <TextInput
                         label={'Email'}
-                        mode='outlined'
                         style={tw`w-80`}
-                        activeOutlineColor='red'
                         onChangeText={setEmail}
                         autoCapitalize='none'
                     />
                     <TextInput
                         label={'Password'}
-                        mode='outlined'
                         style={tw`w-80`}
                         secureTextEntry
-                        activeOutlineColor='red'
                         onChangeText={setPassword}
                         autoCapitalize='none'
                     />
@@ -96,7 +92,6 @@ const LoginScreen = () => {
                     <Button
                         mode='contained'
                         style={tw`w-80`}
-                        buttonColor='red'
                         onPress={handleAuth}
                     >{isSignUp ? 'Sign Up' : 'Sign In'}</Button>
                     <Button

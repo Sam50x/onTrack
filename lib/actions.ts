@@ -60,6 +60,7 @@ export const getAllSubscriptions = async () => {
         .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
+        .order('due_date', { ascending: true })
 
     if (error) {
         return { error: error?.message as string || 'Error while getting subscriptions' }

@@ -50,10 +50,10 @@ const AddSubscriptionScreen = () => {
 
     return (
         <KeyboardAvoidingView
-            style={tw`flex-1`}
+            style={tw`flex-1 bg-[#353434]`}
             behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
         >
-            <View style={tw`flex-1 bg-[#353434] flex- flex-col justify-center items-center`}>
+            <View style={tw`flex-1 flex flex-col justify-center items-center`}>
                 <View style={tw`w-full flex flex-col justify-center items-center gap-2 p-4`}>
                     <TextInput
                         style={tw`w-80`}

@@ -6,21 +6,32 @@ import tw from 'twrnc'
 import { useEffect, useState } from 'react'
 import { Subscription } from '../../lib/types/subscription.type'
 import SubscriptionTicket from '../../components/SubscriptionTicket'
+import SubscriptionTicketModal from '../../components/SubscriptionTicketModal'
 
 const HomeScreen = () => {
 
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
-    const [error, setError] = useState<string>('')
+    const [error, setError] = useState<string | undefined>('')
     const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+    const [subscriptionToEdit, setSubscriptionToEdit] = useState<Subscription | null>(null)
 
     const router = useRouter()
 
     const handleSignOut = async () => {
         const res = await signOut()
 
-        console.log(res)
+        if (res || 'error' in res) {
+            setError(res.error)
+            return
+        }
 
         router.replace('/login')
+    }
+
+    const handleOpenModal = (subscription: Subscription) => {
+        setIsModalOpen(true)
+        setSubscriptionToEdit(subscription)
     }
 
     useEffect(() => {
@@ -33,7 +44,6 @@ const HomeScreen = () => {
                 return
             }
 
-            console.log(res)
             setSubscriptions(res)
             setIsLoading(false)
         }
@@ -42,24 +52,23 @@ const HomeScreen = () => {
     }, [])
 
     const subscriptionTicketsItems = subscriptions.map((sub, index) => {
-        const {
-            frequency, due_date, last_paid_at, price, title, description
-        } = sub
         return (
             <SubscriptionTicket
                 key={index}
-                frequency={frequency}
-                due_date={due_date}
-                last_paid_at={last_paid_at}
-                price={price}
-                title={title}
-                description={description}
+                subscription={sub}
+                openModal={handleOpenModal}
             />
         )
     })
 
     return (
         <View style={tw`flex-1 bg-[#353434]`}>
+            {isModalOpen && (
+                <View>
+                    <SubscriptionTicketModal subscription={subscriptionToEdit!} isVisible={isModalOpen} onClose={() => setIsModalOpen(false)} />
+                </View>
+            )
+            }
             <View style={tw`flex-1 flex flex-col justify-center items-center`}>
                 <View style={tw`w-full flex flex-row justify-between items-center gap-2 p-4`}>
                     <Text
@@ -74,7 +83,7 @@ const HomeScreen = () => {
                         Sign Out
                     </Button>
                 </View>
-                <View style={tw`w-full flex flex-col justify-start items-center gap-2 py-4 px-4 flex-1`}>
+                <View style={tw`w-full flex-1`}>
                     {
                         error ? (
                             <View style={tw`absolute top-4 left-center w-full`}>
@@ -90,7 +99,7 @@ const HomeScreen = () => {
                                 </View>
                             ) :
                                 subscriptions.length ? (
-                                    <View>
+                                    <View style={tw`flex-1 flex flex-col justify-start px-4 py-6 items-center gap-4`}>
                                         {subscriptionTicketsItems}
                                     </View>
                                 ) : (

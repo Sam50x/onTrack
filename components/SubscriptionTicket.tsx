@@ -1,8 +1,8 @@
-import { Subscription } from '../lib/types/subscription.type'
-import { View } from 'react-native'
-import { Text } from 'react-native-paper'
-import tw from 'twrnc'
 import Entypo from '@expo/vector-icons/Entypo';
+import { View } from 'react-native';
+import { Text } from 'react-native-paper';
+import tw from 'twrnc';
+import { Subscription } from '../lib/types/subscription.type';
 
 type props = {
     subscription: Subscription,

@@ -23,7 +23,7 @@ const SubscriptionTicketModal = ({ subscription, isVisible, onClose }: props) =>
     const [error, setError] = useState<string>('')
 
     const handleUpdatingSubscription = () => {
-
+        
     }
 
     const handleDeletingSubscription = () => {

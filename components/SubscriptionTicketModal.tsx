@@ -1,10 +1,10 @@
-import { Subscription } from '../lib/types/subscription.type'
-import { View, TouchableOpacity, Modal } from 'react-native'
-import { Button, SegmentedButtons, Text, TextInput } from 'react-native-paper'
-import tw from 'twrnc'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
-import { createSafeDate } from '../lib/actions';
+import { Modal, TouchableOpacity, View } from 'react-native';
+import { Button, SegmentedButtons, Text, TextInput } from 'react-native-paper';
+import tw from 'twrnc';
+import { createSafeDate, deleteSubscription, isValidDate, paySubscription, updateSubscription } from '../lib/actions';
+import { Subscription } from '../lib/types/subscription.type';
 
 type props = {
     subscription: Subscription,
@@ -22,12 +22,52 @@ const SubscriptionTicketModal = ({ subscription, isVisible, onClose }: props) =>
     const [frequency, setFrequency] = useState<'Monthly' | 'Yearly'>(subscription.frequency)
     const [error, setError] = useState<string>('')
 
-    const handleUpdatingSubscription = () => {
-        
+    const handleUpdatingSubscription = async () => {
+        if (!title || !description || !lastDate || !price || !frequency) {
+            setError('Please fill all fields')
+            return
+        }
+
+        if (!isValidDate(lastDate)) {
+            setError('Please set a valid date')
+            return
+        }
+
+        let res = await updateSubscription({
+            title,
+            description,
+            frequency,
+            price: Number(price),
+            id: subscription.id,
+        })
+
+        if (!res || 'error' in res) {
+            setError(res.error)
+            return
+        }
+
+        res = await paySubscription({
+            id: subscription.id,
+            last_paid_at: createSafeDate(lastDate),
+        })
+
+        if (!res || 'error' in res) {
+            setError(res.error)
+            return
+        }
+
+        onClose()
     }
 
-    const handleDeletingSubscription = () => {
+    const handleDeletingSubscription = async () => {
+        const res = await deleteSubscription(subscription.id!)
 
+        if (!res || 'error' in res) {
+            setError(res.error)
+            return
+        }
+
+        onClose()
     }
 
     return (
@@ -115,7 +155,7 @@ const SubscriptionTicketModal = ({ subscription, isVisible, onClose }: props) =>
                                     style={tw`flex-1 border-red-400 border`}
                                     onPress={handleDeletingSubscription}
                                     textColor='red'
-                                    
+
                                 >
                                     Delete
                                 </Button>

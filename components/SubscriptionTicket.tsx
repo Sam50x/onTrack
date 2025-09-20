@@ -25,7 +25,7 @@ const SubscriptionTicket = ({ subscription, openModal }: props) => {
                 <Text style={tw`text-md text-white/70`}>{description}</Text>
             </View>
             <View style={tw`w-full flex flex-row justify-between`}>
-                {due_date && <Text style={tw`bg-white rounded-full px-4 py-2`}>{new Date(due_date).toISOString().split('T')[0]}</Text>}
+                {due_date && <Text style={tw`bg-white rounded-full px-4 py-2`}>{new Date(due_date).toLocaleDateString('en-US')}</Text>}
                 <Text style={tw`bg-white rounded-full px-4 py-2`}>{price}</Text>
                 <Text style={tw`bg-white rounded-full px-4 py-2`}>{frequency}</Text>
             </View>

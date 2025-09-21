@@ -1,11 +1,12 @@
-import { useRouter, usePathname, Stack } from "expo-router";
+import { Stack, usePathname, useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from "react";
-import { getUser } from "../lib/actions";
-import tw, { useDeviceContext } from 'twrnc'
-import LoadingScreen from "../components/LoadingScreen";
-import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { View } from "react-native";
-import { StatusBar } from 'expo-status-bar'
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import tw, { useDeviceContext } from 'twrnc';
+import LoadingScreen from "../components/LoadingScreen";
+import { getUser } from "../lib/actions";
+import supabase from "../lib/supabase";
 
 const RouteGuard = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -28,6 +29,22 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
     }
 
     getSession()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session)
+        
+        if (event === 'SIGNED_OUT' || !session) {
+          router.replace('/login')
+        } else if (event === 'SIGNED_IN' && session) {
+          router.replace('/')
+        }
+      }
+    )
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [router])
 
   if (isLoading) {

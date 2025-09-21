@@ -33,7 +33,11 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session)
-        
+
+        if (event === 'INITIAL_SESSION') {
+          return
+        }
+
         if (event === 'SIGNED_OUT' || !session) {
           router.replace('/login')
         } else if (event === 'SIGNED_IN' && session) {

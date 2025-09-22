@@ -15,19 +15,19 @@ Your subscriptions tracker.
 
 - Just Sign In or Create an Account
 
-![LoginScreen.jpg](assets/readme/LoginScreen.jpg)
+<img src="assets/readme/LoginScreen.jpg" alt="Login Screen" width="300"/>
 
 ---
 
 - Add your subscriptions
 
-![AddSubscriptionScreen.jpg](assets/readme/AddSubscriptionScreen.jpg)
+<img src="assets/readme/AddSubscriptionScreen.jpg" alt="Add Subscription Screen" width="300"/>
 
 ---
 
 - View your subscriptions sorted by the due date
 
-![SubscriptionsScreen.jpg](assets/readme/SubscriptionsScreen.jpg)
+<img src="assets/readme/SubscriptionsScreen.jpg" alt="Subscriptions Screen" width="300"/>
 
 ---
 
